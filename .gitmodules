@@ -4,3 +4,6 @@
 [submodule "HEN_HOUSE/user_codes/egs_brachy"]
 	path = HEN_HOUSE/user_codes/egs_brachy
 	url = https://github.com/clrp-code/egs_brachy.git
+[submodule "HEN_HOUSE/user_codes/Epp"]
+	path = HEN_HOUSE/user_codes/Epp
+	url = https://github.com/mchamberland/Epp.git
