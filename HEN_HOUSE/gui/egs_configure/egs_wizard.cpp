@@ -108,10 +108,10 @@ QWizardPage * EGS_Wizard::createWelcomePage(){
    guyLabel->setPixmap( QPixmap(":/images/the_guy_measures_flipped.png").scaled(QSize(200,200),
                         Qt::IgnoreAspectRatio,Qt::SmoothTransformation)
    );
-   QHBoxLayout *hl = new QHBoxLayout(welcomePage); hl->setSpacing(30); hl->setMargin(11);
+   QHBoxLayout *hl = new QHBoxLayout(welcomePage); hl->setSpacing(30); hl->setContentsMargins(11, 11, 11, 11);
    QLabel *textLabel = new QLabel(welcomePage);
-   textLabel->setFrameStyle(QFrame::StyledPanel || QFrame::Sunken);
-   textLabel->setMargin(10); textLabel->setAutoFillBackground(true);
+   textLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+   textLabel->setContentsMargins(10, 10, 10, 10); textLabel->setAutoFillBackground(true);
    QPalette palette; palette.setColor(QPalette::Window, Qt::white);
    textLabel->setPalette(palette);
    textLabel->setText("EGSnrc is an Open Source  Monte Carlo simulation toolkit for modelling the transport of "

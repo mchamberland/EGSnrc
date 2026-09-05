@@ -35,6 +35,9 @@
 #include <qfile.h>
 #include <qstringlist.h>
 #include <qregexp.h>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QRegularExpression>
+#endif
 #include <qdir.h>
 #include <qmessagebox.h>
 //Added by qt3to4:
@@ -76,9 +79,12 @@ QString EGS_ConfigReader::getConfig() const {
 QString EGS_PrivateConfigReader::ironIt(const QString &v) {
     //cout << "ironIt: " << v.latin1() << endl;
     QString aux = "/+|"; aux += "\\\\"; aux += "+";
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QStringList list = v.split(QRegularExpression(aux), Qt::SkipEmptyParts);
+#else
     QRegExp re(aux);
-    //QStringList list = QStringList::split(re,v);
-    QStringList list = v.split(re,QString::SkipEmptyParts);
+    QStringList list = v.split(re, Qt::SkipEmptyParts);
+#endif
     QString res; if( v.startsWith("/") ) res = "/";
     for(QStringList::iterator it=list.begin(); it != list.end(); it++) {
         //cout << "next: " << (*it).latin1() << endl;
@@ -100,6 +106,18 @@ EGS_PrivateConfigReader::EGS_PrivateConfigReader(const QString &file) {
 
 QString EGS_PrivateConfigReader::simplify(const QString &value,bool ironit) {
     QString junk = "\\$\\((\\w+)\\)";
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QRegularExpression re(junk);
+    QString res; int pos = 0;
+    while(1) {
+        QRegularExpressionMatch match = re.match(value, pos);
+        if( !match.hasMatch() ) { res += value.mid(pos); break; }
+        int pos1 = match.capturedStart(0);
+        res += value.mid(pos,pos1-pos);
+        res += getVariable(match.captured(1),ironit);
+        pos = pos1 + match.capturedLength(0);
+    }
+#else
     QRegExp re(junk);
     QString res; int pos = 0;
     while(1) {
@@ -109,6 +127,7 @@ QString EGS_PrivateConfigReader::simplify(const QString &value,bool ironit) {
         res += getVariable(re.cap(1),ironit);
         pos = pos1 + re.matchedLength();
     }
+#endif
     if( ironit ) return ironIt(res);
     return res;
 }

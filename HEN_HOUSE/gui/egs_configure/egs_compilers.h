@@ -222,7 +222,7 @@ public:
        // C compiler:
        gb = new QGroupBox("C group box",this);
        gbvl = new QVBoxLayout(gb);
-       gbl = new QHBoxLayout;//gbl->setSpacing(6); gbl->setMargin(11);
+       gbl = new QHBoxLayout;//gbl->setSpacing(6); gbl->setContentsMargins(11, 11, 11, 11);
        gb->setTitle( tr("C compiler") );
        ccCB = new QComboBox(gb); ccCB->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Preferred);
        gbl->addWidget(ccCB);
