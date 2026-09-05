@@ -92,8 +92,13 @@ void EGS_RunPage::make() {
   look_for_pegs->addItem("User pegs area");
   look_for_pegs->addItem("HEN_HOUSE pegs area");
   look_for_pegs->addItem("HOME");
-  connect(look_for_pegs,SIGNAL(activated(const QString &)),this,
-            SLOT(pegsAreaChanged(const QString &)));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+  connect(look_for_pegs,&QComboBox::textActivated,this,
+            &EGS_RunPage::pegsAreaChanged);
+#else
+  connect(look_for_pegs,QOverload<const QString &>::of(&QComboBox::activated),this,
+            &EGS_RunPage::pegsAreaChanged);
+#endif
   hbl->addWidget(look_for_pegs);
   QSpacerItem *spacer = new QSpacerItem(20,20,QSizePolicy::Expanding,
                                           QSizePolicy::Minimum);
@@ -163,8 +168,13 @@ void EGS_RunPage::make() {
 #ifdef WIN32
   b_button->setEnabled(false);
 #endif
-  connect(bg_run_options,SIGNAL(buttonClicked(int)),
-                         SLOT(checkRunOptions(int)));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  connect(bg_run_options,&QButtonGroup::idClicked,
+                         this,&EGS_RunPage::checkRunOptions);
+#else
+  connect(bg_run_options,QOverload<int>::of(&QButtonGroup::buttonClicked),
+                         this,&EGS_RunPage::checkRunOptions);
+#endif
 
   vl1->addWidget(run_options);
 

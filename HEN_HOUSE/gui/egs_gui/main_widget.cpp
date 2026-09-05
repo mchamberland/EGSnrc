@@ -173,8 +173,13 @@ EGS_MainWidget::EGS_MainWidget(QWidget *parent, Qt::WindowFlags f)
              SLOT(changeEgsHome(const QString &)));
     connect(conf_page,SIGNAL(henHouseChanged(const QString &)),this,
              SLOT(changeHenHouse(const QString &)));
-    connect(user_code,SIGNAL(activated(const QString &)),this,
-             SLOT(changeUserCode(const QString &)));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+    connect(user_code,&QComboBox::textActivated,this,
+             &EGS_MainWidget::changeUserCode);
+#else
+    connect(user_code,QOverload<const QString &>::of(&QComboBox::activated),this,
+             &EGS_MainWidget::changeUserCode);
+#endif
     connect(this,SIGNAL(userCodeChanged(const QString &)),compile_page,
              SLOT(setUserCode(const QString &)));
     connect(this,SIGNAL(userCodeChanged(const QString &)),run_page,

@@ -62,6 +62,13 @@ EGS_Wizard::EGS_Wizard(QWidget *parent, Qt::WindowFlags f)
    setMinimumWidth(690); //setMaximumWidth(3000); setFixedHeight(420); //setMinimumHeight(420); setMaximumHeight(450);
    setPixmap(QWizard::LogoPixmap,
              QPixmap(":/images/nrc-badge.png").scaled(QSize(150,75),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+#if defined(Q_OS_MAC) && QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+   /* Qt 6 looks up the default background from com.apple.KeyboardSetupAssistant,
+      which no longer exists on current macOS; the nil bundle URL it then passes
+      to NSBundle aborts the program. Providing a pixmap skips the lookup. */
+   QPixmap wizard_background(1,1); wizard_background.fill(Qt::transparent);
+   setPixmap(QWizard::BackgroundPixmap, wizard_background);
+#endif
 
    config_reader = new EGS_ConfigReader;
 

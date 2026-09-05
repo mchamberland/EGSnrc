@@ -194,7 +194,12 @@ void EGS_PegsPage::init()
   connect(cancel_button,SIGNAL(clicked()),this,SLOT(stopPegs()));
 
   connect(dc_icru_check,SIGNAL(toggled(bool)),this,SLOT(densityIcruChanged(bool)));
-  connect(medtype_cbox,SIGNAL(activated(QString)),this,SLOT(medtypeChanged(QString)));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+  connect(medtype_cbox,&QComboBox::textActivated,this,&EGS_PegsPage::medtypeChanged);
+#else
+  connect(medtype_cbox,QOverload<const QString &>::of(&QComboBox::activated),
+          this,&EGS_PegsPage::medtypeChanged);
+#endif
   connect(dc_button,SIGNAL(clicked()),this,SLOT(getDensityFile()));
   connect(details_b,SIGNAL(clicked()),this,SLOT(showHideDetails()));
   connect(is_gas,SIGNAL(toggled(bool)),this,SLOT(enable_gaspEdit()));

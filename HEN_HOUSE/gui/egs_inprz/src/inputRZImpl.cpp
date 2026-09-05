@@ -73,8 +73,8 @@ inputRZImpl::inputRZImpl( QWidget* parent, const char* name,
 
     setupUi(this);
     connect(CancelButton, SIGNAL(clicked()), this, SLOT(close()));
-    connect(sproutComboBox, SIGNAL(activated(QString)), this, SLOT(update_SprOutTableHeaders()));
-    connect(sproutComboBox, SIGNAL(highlighted(QString)), this, SLOT(update_SprOutTableHeaders()));
+    connect(sproutComboBox, SIGNAL(activated(int)), this, SLOT(update_SprOutTableHeaders()));
+    connect(sproutComboBox, SIGNAL(highlighted(int)), this, SLOT(update_SprOutTableHeaders()));
     connect(parallelplateRadioButton, SIGNAL(toggled(bool)), this, SLOT(set_electr()));
     connect(localRadioButton, SIGNAL(toggled(bool)), this, SLOT(set_local_external()));
     connect(externalRadioButton, SIGNAL(toggled(bool)), this, SLOT(set_local_external()));
@@ -107,8 +107,8 @@ inputRZImpl::inputRZImpl( QWidget* parent, const char* name,
     connect(HelpButton, SIGNAL(clicked()), this, SLOT(show_help()));
     connect(eRangeRejCheckBox, SIGNAL(clicked()), this, SLOT(update_range_rejection()));
     connect(PhotonForcingCheckBox, SIGNAL(clicked()), this, SLOT(update_photon_forcing()));
-    connect(ifullComboBox, SIGNAL(highlighted(QString)), this, SLOT(activate_PulseHDistInputs()));
-    connect(ifullComboBox, SIGNAL(activated(QString)), this, SLOT(activate_PulseHDistInputs()));
+    connect(ifullComboBox, SIGNAL(highlighted(int)), this, SLOT(activate_PulseHDistInputs()));
+    connect(ifullComboBox, SIGNAL(activated(int)), this, SLOT(activate_PulseHDistInputs()));
     connect(InputFileComboBox, SIGNAL(activated(int)), this, SLOT(change_input_file()));
     connect(cavrzRadioButton, SIGNAL(clicked()), this, SLOT(update_usercode_open()));
     connect(sprrzRadioButton, SIGNAL(clicked()), this, SLOT(update_usercode_open()));
@@ -122,21 +122,21 @@ inputRZImpl::inputRZImpl( QWidget* parent, const char* name,
     connect(ConfigurationButton, SIGNAL(clicked()), this, SLOT(configure()));
     connect(CONFcomboBox, SIGNAL(activated(int)), this, SLOT(change_config_file()));
     connect(AboutButton, SIGNAL(clicked()), this, SLOT(show_about()));
-    connect(BoundComptoncomboBox, SIGNAL(activated(QString)), this, SLOT(EnableTransportParamByRegions()));
-    connect(PEcomboBox, SIGNAL(activated(QString)), this, SLOT(EnableTransportParamByRegions()));
-    connect(RayleighcomboBox, SIGNAL(activated(QString)), this, SLOT(EnableTransportParamByRegions()));
-    connect(RelaxationcomboBox, SIGNAL(activated(QString)), this, SLOT(EnableTransportParamByRegions()));
-    connect(RayleighcomboBox, SIGNAL(activated(QString)), this, SLOT(activate_ff_table()));
-    connect(RayleighcomboBox, SIGNAL(highlighted(QString)), this, SLOT(activate_ff_table()));
-    connect(RayleighcomboBox, SIGNAL(highlighted(QString)), this, SLOT(EnableTransportParamByRegions()));
-    connect(RelaxationcomboBox, SIGNAL(highlighted(QString)), this, SLOT(EnableTransportParamByRegions()));
-    connect(PEcomboBox, SIGNAL(highlighted(QString)), this, SLOT(EnableTransportParamByRegions()));
-    connect(BoundComptoncomboBox, SIGNAL(highlighted(QString)), this, SLOT(EnableTransportParamByRegions()));
+    connect(BoundComptoncomboBox, SIGNAL(activated(int)), this, SLOT(EnableTransportParamByRegions()));
+    connect(PEcomboBox, SIGNAL(activated(int)), this, SLOT(EnableTransportParamByRegions()));
+    connect(RayleighcomboBox, SIGNAL(activated(int)), this, SLOT(EnableTransportParamByRegions()));
+    connect(RelaxationcomboBox, SIGNAL(activated(int)), this, SLOT(EnableTransportParamByRegions()));
+    connect(RayleighcomboBox, SIGNAL(activated(int)), this, SLOT(activate_ff_table()));
+    connect(RayleighcomboBox, SIGNAL(highlighted(int)), this, SLOT(activate_ff_table()));
+    connect(RayleighcomboBox, SIGNAL(highlighted(int)), this, SLOT(EnableTransportParamByRegions()));
+    connect(RelaxationcomboBox, SIGNAL(highlighted(int)), this, SLOT(EnableTransportParamByRegions()));
+    connect(PEcomboBox, SIGNAL(highlighted(int)), this, SLOT(EnableTransportParamByRegions()));
+    connect(BoundComptoncomboBox, SIGNAL(highlighted(int)), this, SLOT(EnableTransportParamByRegions()));
     connect(PEGSlessRadioButton, SIGNAL(toggled(bool)), this, SLOT(set_data_area()));
     connect(MDFileButton, SIGNAL(clicked()), this, SLOT(GetMDfile()));
     connect(DFBrowse, SIGNAL(clicked()), this, SLOT(GetDFfile()));
-    connect(mediaComboBox, SIGNAL(activated(QString)), this, SLOT(update_MediaInput()));
-    connect(sourceComboBox, SIGNAL(activated(QString)), this, SLOT(update_source_type()));
+    connect(mediaComboBox, SIGNAL(activated(int)), this, SLOT(update_MediaInput()));
+    connect(sourceComboBox, SIGNAL(activated(int)), this, SLOT(update_source_type()));
     connect(mediaTable, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(mediaTable_clicked(int,int)));
     connect(mediaTable, SIGNAL(cellClicked(int,int)), this, SLOT(mediaTable_singleclicked(int,int)));
     connect(customFFTable, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(customFFTable_clicked(int,int)));
@@ -148,10 +148,22 @@ inputRZImpl::inputRZImpl( QWidget* parent, const char* name,
     connect(isGasCheckBox, SIGNAL(clicked()), this, SLOT(enable_gaspEdit()));
     connect(pz_or_rhozTable, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(pz_or_rhozTable_clicked(int,int)));
     connect(pz_or_rhozTable, SIGNAL(cellClicked(int,int)), this, SLOT(pz_or_rhozTable_singleclicked(int,int)));
-    connect(inpmediumComboBox, SIGNAL(highlighted(QString)), this, SLOT(inpmediumSave(QString)));
-    connect(inpmediumComboBox, SIGNAL(activated(QString)), this, SLOT(inpmediumChanged(QString)));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+    connect(inpmediumComboBox, &QComboBox::textHighlighted, this, &inputRZImpl::inpmediumSave);
+    connect(inpmediumComboBox, &QComboBox::textActivated, this, &inputRZImpl::inpmediumChanged);
+#else
+    connect(inpmediumComboBox, QOverload<const QString &>::of(&QComboBox::highlighted),
+            this, &inputRZImpl::inpmediumSave);
+    connect(inpmediumComboBox, QOverload<const QString &>::of(&QComboBox::activated),
+            this, &inputRZImpl::inpmediumChanged);
+#endif
     connect(DCcheckBox, SIGNAL(toggled(bool)), this, SLOT(enableDCfileInput(bool)));
-    connect(medTypeComboBox, SIGNAL(activated(QString)), this, SLOT(medTypeChanged(QString)));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+    connect(medTypeComboBox, &QComboBox::textActivated, this, &inputRZImpl::medTypeChanged);
+#else
+    connect(medTypeComboBox, QOverload<const QString &>::of(&QComboBox::activated),
+            this, &inputRZImpl::medTypeChanged);
+#endif
     connect(DFEdit, SIGNAL(returnPressed()), this, SLOT(GetDFfileReturn()));
     Initialize();
     SetValidator( );

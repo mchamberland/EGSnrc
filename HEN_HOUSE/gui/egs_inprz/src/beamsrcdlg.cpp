@@ -243,8 +243,13 @@ BeamSourceDlg::BeamSourceDlg(QWidget * parent, const char * name,
 
         connect( okButton, SIGNAL(clicked()), this, SLOT(close()) );
         connect( cancelButton, SIGNAL(clicked()), this, SLOT(cancel()) );
-        connect( beam, SIGNAL( activated(const QString&) ),
-                 this, SLOT( beamUserCodeChanged(const QString&) ) );
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+        connect( beam, &QComboBox::textActivated,
+                 this, &BeamSourceDlg::beamUserCodeChanged );
+#else
+        connect( beam, QOverload<const QString &>::of(&QComboBox::activated),
+                 this, &BeamSourceDlg::beamUserCodeChanged );
+#endif
 
 }
 
