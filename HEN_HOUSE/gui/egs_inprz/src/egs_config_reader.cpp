@@ -49,6 +49,13 @@
 
 using namespace std;
 
+/* Qt::SkipEmptyParts arrived in Qt 5.14, and Qt 6 dropped the QString one. */
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+static const Qt::SplitBehavior EGS_SkipEmptyParts = Qt::SkipEmptyParts;
+#else
+static const QString::SplitBehavior EGS_SkipEmptyParts = QString::SkipEmptyParts;
+#endif
+
 #ifdef CR_DEBUG
 #include <fstream>
 ofstream cr_debug("cr_debug.out");
@@ -80,10 +87,10 @@ QString EGS_PrivateConfigReader::ironIt(const QString &v) {
     //cout << "ironIt: " << v.latin1() << endl;
     QString aux = "/+|"; aux += "\\\\"; aux += "+";
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    QStringList list = v.split(QRegularExpression(aux), Qt::SkipEmptyParts);
+    QStringList list = v.split(QRegularExpression(aux), EGS_SkipEmptyParts);
 #else
     QRegExp re(aux);
-    QStringList list = v.split(re, Qt::SkipEmptyParts);
+    QStringList list = v.split(re, EGS_SkipEmptyParts);
 #endif
     QString res; if( v.startsWith("/") ) res = "/";
     for(QStringList::iterator it=list.begin(); it != list.end(); it++) {
