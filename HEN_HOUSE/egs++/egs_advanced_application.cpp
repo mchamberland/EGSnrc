@@ -1255,7 +1255,7 @@ void EGS_AdvancedApplication::splitTopParticleIsotropically(const EGS_Float &fsp
     the_stack->wt[np] /= fsplit;
     double E = the_stack->E[np];
     EGS_Float x = the_stack->x[np], y = the_stack->y[np], z = the_stack->z[np],
-                                                          wthin = the_stack->wt[np], dnear = the_stack->dnear[np];
+              wthin = the_stack->wt[np], dnear = the_stack->dnear[np];
     EGS_Float u,v,w;
     /* If fsplit is a non-integer, sample between int(fsplit) and int(split)+1 */
     int nsplit = int(fsplit);
