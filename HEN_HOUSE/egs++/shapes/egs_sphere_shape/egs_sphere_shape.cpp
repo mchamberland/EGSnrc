@@ -20,12 +20,51 @@
 #  along with EGSnrc. If not, see <http://www.gnu.org/licenses/>.
 #
 ###############################################################################
+#
+#  Author:          Iwan Kawrakow
+#
+#  Contributors:    Marc Chamberland
+#                   Reid Townson
+#
+###############################################################################
 */
 
 #include "egs_sphere_shape.h"
 #include "egs_input.h"
 
+static bool EGS_SPHERE_SHAPE_LOCAL inputSet = false;
+static shared_ptr<EGS_BlockInput> EGS_SPHERE_SHAPE_LOCAL shapeBlockInput = make_shared<EGS_BlockInput>("shape");
+
 extern "C" {
+
+    static void setInputs() {
+        inputSet = true;
+
+        setShapeInputs(shapeBlockInput);
+        shapeBlockInput->getSingleInput("library")->setValues({"egs_cylinder_shape"});
+
+        shapeBlockInput->addSingleInput("radius", true, "The radius of the sphere or cylinder, in cm.");
+        shapeBlockInput->addSingleInput("midpoint", false, "The x, y and z coordinates of the midpoint of the sphere or cylinder, in cm. Defaults to 0, 0, 0.");
+    }
+
+    EGS_SPHERE_SHAPE_EXPORT string getExample() {
+        string example {
+            R"(
+        #:start shape:
+            library = egs_sphere_shape
+            midpoint = Ox, Oy, Oz
+            radius = the sphere radius
+        :stop shape:
+)"};
+        return example;
+    }
+
+    EGS_SPHERE_SHAPE_EXPORT shared_ptr<EGS_BlockInput> getInputs() {
+        if(!inputSet) {
+            setInputs();
+        }
+        return shapeBlockInput;
+    }
 
     EGS_SPHERE_SHAPE_EXPORT EGS_BaseShape *createShape(EGS_Input *input,
             EGS_ObjectFactory *f) {

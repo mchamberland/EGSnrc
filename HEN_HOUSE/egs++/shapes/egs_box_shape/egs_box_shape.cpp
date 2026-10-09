@@ -20,12 +20,51 @@
 #  along with EGSnrc. If not, see <http://www.gnu.org/licenses/>.
 #
 ###############################################################################
+#
+#  Author:          Iwan Kawrakow
+#
+#  Contributors:    Marc Chamberland
+#                   Reid Townson
+#
+###############################################################################
 */
 
 #include "egs_box_shape.h"
 #include "egs_input.h"
 
+static bool EGS_BOX_SHAPE_LOCAL inputSet = false;
+static shared_ptr<EGS_BlockInput> EGS_BOX_SHAPE_LOCAL shapeBlockInput = make_shared<EGS_BlockInput>("shape");
+
 extern "C" {
+
+    static void setInputs() {
+        inputSet = true;
+
+        setShapeInputs(shapeBlockInput);
+        shapeBlockInput->getSingleInput("library")->setValues({"egs_box_shape"});
+
+        shapeBlockInput->addSingleInput("box size", false, "One or three numbers. The sidelength for a cube, or the x, y and z sidelengths.");
+    }
+
+    EGS_BOX_SHAPE_EXPORT string getExample() {
+        string example {
+            R"(
+        :start shape:
+            library = egs_box_shape
+            radius = the circle radius
+            midpoint = Ox, Oy (optional)
+            inner radius = the inner radius (optional)
+        :stop shape:
+)"};
+        return example;
+    }
+
+    EGS_BOX_SHAPE_EXPORT shared_ptr<EGS_BlockInput> getInputs() {
+        if(!inputSet) {
+            setInputs();
+        }
+        return shapeBlockInput;
+    }
 
     EGS_BOX_SHAPE_EXPORT EGS_BaseShape *createShape(EGS_Input *input,
             EGS_ObjectFactory *f) {

@@ -20,12 +20,54 @@
 #  along with EGSnrc. If not, see <http://www.gnu.org/licenses/>.
 #
 ###############################################################################
+#
+#  Author:          Iwan Kawrakow
+#
+#  Contributors:    Marc Chamberland
+#                   Reid Townson
+#
+###############################################################################
 */
 
 #include "egs_cylinder_shape.h"
 #include "egs_input.h"
 
+static bool EGS_CYLINDER_SHAPE_LOCAL inputSet = false;
+static shared_ptr<EGS_BlockInput> EGS_CYLINDER_SHAPE_LOCAL shapeBlockInput = make_shared<EGS_BlockInput>("shape");
+
 extern "C" {
+
+    static void setInputs() {
+        inputSet = true;
+
+        setShapeInputs(shapeBlockInput);
+        shapeBlockInput->getSingleInput("library")->setValues({"egs_cylinder_shape"});
+
+        shapeBlockInput->addSingleInput("height", true, "The height of the cylinder, in cm.");
+        shapeBlockInput->addSingleInput("phi range", false, "The minimum and maximum phi values, in degrees. This allows you restrict the cylinder to a shape like a slice of pie!");
+        shapeBlockInput->addSingleInput("axis", true, "A unit vector that defines the axis of the cylinder.");
+    }
+
+    EGS_CYLINDER_SHAPE_EXPORT string getExample() {
+        string example {
+            R"(
+        #:start shape:
+            library = egs_cylinder_shape
+            radius = the cylinder radius
+            height = the cylinder height
+            midpoint = Ox, Oy, Oz (optional)
+            axis = ax, ay, az (optional)
+        :stop shape:
+)"};
+        return example;
+    }
+
+    EGS_CYLINDER_SHAPE_EXPORT shared_ptr<EGS_BlockInput> getInputs() {
+        if(!inputSet) {
+            setInputs();
+        }
+        return shapeBlockInput;
+    }
 
     EGS_CYLINDER_SHAPE_EXPORT EGS_BaseShape *createShape(EGS_Input *input,
             EGS_ObjectFactory *f) {

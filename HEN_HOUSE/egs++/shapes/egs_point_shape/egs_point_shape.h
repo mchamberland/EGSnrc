@@ -20,6 +20,12 @@
 #  along with EGSnrc. If not, see <http://www.gnu.org/licenses/>.
 #
 ###############################################################################
+#
+#  Author:          Iwan Kawrakow
+#
+#  Contributors:    Marc Chamberland
+#
+###############################################################################
 */
 
 #ifndef EGS_POINT_SHAPE_
